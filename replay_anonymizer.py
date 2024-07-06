@@ -670,7 +670,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format='%(asctime)s (%(threadName)-10s) [%(levelname)s] %(message)s',
         filename='log_file.log',
-        filemode="w",
+        filemode="a",
         level=logging.INFO)
 
     logging.getLogger().setLevel(logging.INFO)
