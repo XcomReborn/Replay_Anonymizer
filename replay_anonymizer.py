@@ -60,10 +60,8 @@ class ReplayAnonymizer:
                     signed=False)
                 return theInt
         except Exception as e:
-            logging.error(str(e))
-            logging.error("Failed to read 4 bytes")
-            logging.exception("Stack Trace: ")
-            self.success = False
+            return None
+
 
     def read_2_bytes_as_unsigned_int(self) -> int:
         "Reads 2 bytes as an unsigned int."
@@ -488,7 +486,7 @@ class ReplayAnonymizer:
             self.resize_header(size_difference=bytes_size_difference)
 
             # Replace ALL chat messages
-            # self.replace_all_chat_messages(user_name=user_name, replacement=replacement_user_name)
+            self.replace_all_chat_messages(user_name=user_name, replacement=replacement_user_name)
 
 
     def replace_all_chat_messages(self, user_name : str, replacement : str):
@@ -501,8 +499,27 @@ class ReplayAnonymizer:
 
         # store the current data index
         temp = self.dataIndex
+
         while (self.data.find(user_name.encode('utf-16le')) != -1):
             start = self.data.find(user_name.encode('utf-16le')) - 4
+            # check chat message is a message and not the persons name mentioned in chat or
+            # the name in a lag message
+            # the 4 bytes before the user name should be the length of the string
+            # the 4 bytes after the user name should be the user id between 1000 and 1007
+            self.seek(start, 0)
+            user_name_length = self.read_4_bytes_as_unsigned_int()
+
+            user_id_location = start + 4 + len(user_name) * 2
+            self.seek(user_id_location, 0)
+            user_id = self.read_4_bytes_as_unsigned_int()
+
+            if user_name_length != len(user_name) or not (1000 <= user_id <= 1007):
+                # not a chat message just replace the name with replacement
+                replacement_bytes = bytes(replacement.strip().encode('utf-16le'))
+                end = start + 4 + (len(user_name) * 2)
+                self.data = self.data[:start + 4] + replacement_bytes + self.data[end:]
+                continue
+
             end = start + 4 + (len(user_name) * 2)
             size_of_replacement = len(replacement)
             replacement_size = size_of_replacement.to_bytes(4, 'little')
@@ -523,6 +540,7 @@ class ReplayAnonymizer:
             new_size = original_size - (len(user_name) - len(replacement)) * 2
             self.data = self.data[:start] + new_size.to_bytes(4, 'little') + self.data[end:]
 
+        
         # reset the curent dataIndex back to its original value
         self.dataIndex = temp
 
