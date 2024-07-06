@@ -315,7 +315,7 @@ class ReplayAnonymizer:
         chunkType = self.read_ASCII_string(stringLength=8)
         # Reads FOLDFOLD, FOLDDATA, DATASDSC, DATAINFO etc
 
-        logging.info(chunkType)
+        #logging.info(chunkType)
 
         chunkVersion = self.read_4_bytes_as_unsigned_int()
 
@@ -435,10 +435,6 @@ class ReplayAnonymizer:
         self.playerList.clear()
         self.player_number = 1
         self.dataIndex = 0
-
-        # Set return flag
-        self.success = False
-
 
         while True:
             user_name_header_location = self.data.find('DATAINFO'.encode('ASCII'), self.dataIndex)
