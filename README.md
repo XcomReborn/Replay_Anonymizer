@@ -4,7 +4,11 @@ Usage:
 
 Download the replay_anonymizer.py file into the directory containing the COH1 replay files you want to anonymize.
 
+
 replay_anonymizer.py input.rec output.rec
+
+input.rec -> The file you want to anonymize
+output.rec -> The file you want to create
 
 Result:
 
