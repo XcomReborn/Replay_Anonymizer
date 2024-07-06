@@ -1,0 +1,4 @@
+*.rec
+*.pyc
+*.log
+test.py
