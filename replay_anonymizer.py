@@ -488,7 +488,7 @@ class ReplayAnonymizer:
             self.resize_header(size_difference=bytes_size_difference)
 
             # Replace ALL chat messages
-            self.replace_all_chat_messages(user_name=user_name, replacement=replacement_user_name)
+            # self.replace_all_chat_messages(user_name=user_name, replacement=replacement_user_name)
 
 
     def replace_all_chat_messages(self, user_name : str, replacement : str):
